@@ -1,34 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_mail import Mail, Message
+from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime, timedelta
-import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
+app.secret_key = 'Mcoboti@002'  # Important for saving user info during booking
 
-# Secret key for session management (flash messages, etc.)
-app.secret_key = 'Mcoboti@002'
+# ---------------------------
+# Email settings
+# ---------------------------
+EMAIL_ADDRESS = 'mcoresidence@gmail.com'
+EMAIL_PASSWORD = 'lftiiuewhdhfurvs'
+RECEIVER_EMAIL = 'mcoresidence@gmail.com'  # where you receive the bookings
 
-# -------------------------
-# 📧 Email Configuration
-# -------------------------
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # SMTP server
-app.config['MAIL_PORT'] = 587                 # Port for TLS
-app.config['MAIL_USE_TLS'] = True             # Use TLS
-app.config['MAIL_USERNAME'] = 'mcoresidence@gmail.com'  # Your email
-app.config['MAIL_PASSWORD'] = 'lftiiuewhdhfurvs'     # App password or real password
+# ---------------------------
+# Routes
+# ---------------------------
 
-mail = Mail(app)
-
-# -------------------------
-# 🏠 Home Route
-# -------------------------
+# Home page
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-# -------------------------
-# 📝 Booking Route
-# -------------------------
+# Booking page (GET to show form, POST to handle form data)
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if request.method == 'POST':
@@ -39,144 +34,127 @@ def booking():
         booking_option = request.form['booking_option']
         checkin_date = request.form['checkin_date']
         checkin_time = request.form['checkin_time']
-        pickup = request.form.get('pickup', 'no')
-        pickup_location = request.form.get('pickup_location', '')
-        special = request.form.get('special', '')
+        pickup = request.form['pickup']
+        pickup_location = request.form.get('pickup_location')
+        special = request.form.get('special')
 
-        # Combine check-in date and time into a datetime object
-        checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", "%Y-%m-%d %H:%M")
-
-        # -------------------------
-        # 💰 Calculate Amount & Checkout Time
-        # -------------------------
-        if booking_option == "night":
-            amount_due = 450
-            checkout_time = checkin_datetime.replace(hour=11, minute=0) + timedelta(days=1)
-            show_checkout = True
-        elif booking_option == "hour":
-            amount_due = 150
-            checkout_time = checkin_datetime + timedelta(hours=1)
-            show_checkout = False
-        elif booking_option == "3hours":
-            amount_due = 250
-            checkout_time = checkin_datetime + timedelta(hours=3)
-            show_checkout = False
+        # Calculate total amount
+        if booking_option == 'night':
+            total_amount = 450
+            booking_option_display = 'Night (R450)'
+        elif booking_option == 'hour':
+            total_amount = 150
+            booking_option_display = '1 Hour (R150)'
+        elif booking_option == '3hours':
+            total_amount = 250
+            booking_option_display = '3 Hours (R250)'
         else:
-            amount_due = 0
-            checkout_time = None
-            show_checkout = False
+            total_amount = 0
+            booking_option_display = 'Unknown'
 
-        # Generate a reference number
-        reference = f"MCO{random.randint(1000, 9999)}"
+        # Calculate automatic checkout time if needed
+        checkout_time = None
+        if booking_option == 'hour':
+            checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
+            checkout_time = (checkin_datetime + timedelta(hours=1)).strftime('%H:%M')
+        elif booking_option == '3hours':
+            checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
+            checkout_time = (checkin_datetime + timedelta(hours=3)).strftime('%H:%M')
 
-        # Store data in session or pass it through POST if preferred
-        return render_template(
-            'payment.html',
-            name=name,
-            email=email,
-            phone=phone,
-            booking_option=booking_option,
-            checkin=checkin_datetime.strftime("%Y-%m-%d %H:%M"),
-            checkout=checkout_time.strftime("%Y-%m-%d %H:%M"),
-            pickup=pickup,
-            pickup_location=pickup_location,
-            special=special,
-            amount=amount_due,
-            reference=reference,
-            show_checkout=show_checkout
-        )
+        # Save booking in session
+        session['booking'] = {
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'booking_option': booking_option,
+            'booking_option_display': booking_option_display,
+            'checkin_date': checkin_date,
+            'checkin_time': checkin_time,
+            'pickup': pickup,
+            'pickup_location': pickup_location,
+            'special': special,
+            'total_amount': total_amount,
+            'checkout_time': checkout_time
+        }
 
-    # If GET request, show empty booking form
+        return redirect(url_for('payment'))
+
     return render_template('booking.html')
 
-# -------------------------
-# 💳 Payment Route
-# -------------------------
-@app.route('/payment', methods=['POST'])
+# Payment page
+@app.route('/payment', methods=['GET', 'POST'])
 def payment():
-    # Collect posted data from the payment form
-    name = request.form['name']
-    email = request.form['email']
-    phone = request.form['phone']
-    booking_option = request.form['booking_option']
-    checkin = request.form['checkin']
-    checkout = request.form['checkout']
-    pickup = request.form['pickup']
-    pickup_location = request.form['pickup_location']
-    special = request.form['special']
-    amount = request.form['amount']
-    reference = request.form['reference']
+    booking = session.get('booking')
 
-    # -------------------------
-    # ✉️ Send Email to Client
-    # -------------------------
-    try:
-        client_message = Message(
-            subject=f"Booking Confirmation - {reference}",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[email]
-        )
-        client_message.body = f"""
-Hi {name},
+    if not booking:
+        return redirect(url_for('index'))
 
-Thank you for booking with MCO Guest Residencies.
-
-Here are your booking details:
-- Booking Option: {booking_option}
-- Check-in: {checkin}
-- {'Check-out: ' + checkout if checkout else ''}
-- Pickup: {pickup} ({pickup_location})
-- Special Requests: {special}
-- Total Amount: R{amount}
-- Reference Number: {reference}
-
-We look forward to welcoming you!
-
-Best regards,
-MCO Residencies
-"""
-        mail.send(client_message)
-
-        # -------------------------
-        # ✉️ Send Email to Owner
-        # -------------------------
-        owner_message = Message(
-            subject=f"New Booking Received - {reference}",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[app.config['MAIL_USERNAME']]  # Send to yourself
-        )
-        owner_message.body = f"""
-NEW BOOKING RECEIVED:
-
-Name: {name}
-Email: {email}
-Phone: {phone}
-Booking Option: {booking_option}
-Check-in: {checkin}
-{'Check-out: ' + checkout if checkout else ''}
-Pickup: {pickup} ({pickup_location})
-Special Requests: {special}
-Total Amount: R{amount}
-Reference: {reference}
-"""
-
-        mail.send(owner_message)
-
+    if request.method == 'POST':
+        # Payment confirmed
+        send_emails(booking)
         return redirect(url_for('success'))
 
-    except Exception as e:
-        flash(f"Error sending emails: {str(e)}")
-        return redirect(url_for('home'))
+    return render_template('payment.html', booking=booking)
 
-# -------------------------
-# ✅ Booking Success Page
-# -------------------------
+# Success page
 @app.route('/success')
 def success():
     return render_template('success.html')
 
-# -------------------------
-# 🚀 Run Flask App
-# -------------------------
+# ---------------------------
+# Helper: Send emails
+# ---------------------------
+def send_emails(booking):
+    # Create the email content
+    subject = f"Booking Confirmation - {booking['name']}"
+    body = f"""
+    Booking Details:
+
+    Name: {booking['name']}
+    Email: {booking['email']}
+    Phone: {booking['phone']}
+    Booking Option: {booking['booking_option_display']}
+    Check-in: {booking['checkin_date']} at {booking['checkin_time']}
+    """
+
+    if booking['booking_option'] == 'night':
+        body += "\nCheckout Time: Before 11:00 AM"
+    else:
+        body += f"\nCheckout Time: {booking['checkout_time']}"
+
+    if booking['pickup'] == 'yes':
+        body += f"\nPickup Location: {booking['pickup_location']}"
+
+    if booking['special']:
+        body += f"\nSpecial Requests: {booking['special']}"
+
+    body += f"\n\nTotal Amount: R{booking['total_amount']}"
+
+    # Email to client
+    send_email(booking['email'], subject, body)
+
+    # Email to you
+    send_email(RECEIVER_EMAIL, subject, body)
+
+# ---------------------------
+# Helper: Actually send an email
+# ---------------------------
+def send_email(to_email, subject, body):
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = to_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    # Connect and send
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
+
+# ---------------------------
+# Run the app
+# ---------------------------
 if __name__ == '__main__':
     app.run(debug=True)
