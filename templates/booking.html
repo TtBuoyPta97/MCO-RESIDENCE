@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking - MCO Residence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
 
+    <header style="text-align: center; margin-top: 20px;">
+        <h1>Book Your Stay at MCO Residence</h1>
+    </header>
+
+    <section style="max-width: 600px; margin: 40px auto;">
+        <form action="{{ url_for('booking') }}" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+
+            <!-- Name -->
+            <label>Name:</label>
+            <input type="text" name="name" required>
+
+            <!-- Email -->
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <!-- Phone -->
+            <label>Phone (Cell Number):</label>
+            <input type="text" name="phone" required>
+
+            <!-- Booking Option -->
+            <label>Booking Option:</label>
+            <select name="booking_option" required>
+                <option value="">-- Select Option --</option>
+                <option value="night">Night (R450)</option>
+                <option value="hour">1 Hour (R150)</option>
+                <option value="3hours">3 Hours (R250)</option>
+            </select>
+
+            <!-- Check-in Date -->
+            <label>Check-in Date:</label>
+            <input type="date" name="checkin_date" required>
+
+            <!-- Check-in Time -->
+            <label>Check-in Time:</label>
+            <input type="time" name="checkin_time" required>
+
+            <!-- Pickup Needed -->
+            <label>Do you require a pickup?</label>
+            <select name="pickup">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <!-- Pickup Location (optional) -->
+            <label>If Yes, select pickup location:</label>
+            <select name="pickup_location">
+                <option value="">-- Choose Garage --</option>
+                <option value="Salol Garage">Salol Garage</option>
+                <option value="Engen Garage">Engen Garage</option>
+            </select>
+
+            <!-- Special Considerations -->
+            <label>Special Considerations:</label>
+            <textarea name="special" rows="4" placeholder="Any special requests..."></textarea>
+
+            <!-- Submit Button -->
+            <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 16px;">
+                Proceed to Payment
+            </button>
+
+        </form>
+    </section>
+
+</body>
+</html>
