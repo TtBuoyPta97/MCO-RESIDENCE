@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment - MCO Residence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header style="text-align: center; margin-top: 20px;">
+        <h1>Payment Summary</h1>
+    </header>
+
+    <section style="max-width: 600px; margin: 40px auto; font-size: 16px;">
+        <h2>Booking Details</h2>
+
+        <p><strong>Name:</strong> {{ booking.name }}</p>
+        <p><strong>Email:</strong> {{ booking.email }}</p>
+        <p><strong>Phone:</strong> {{ booking.phone }}</p>
+        <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
+        <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
+
+        {% if booking.booking_option == 'night' %}
+            <p><strong>Note:</strong> Checkout time is before <strong>11:00 AM</strong> the next day.</p>
+        {% elif booking.booking_option == 'hour' or booking.booking_option == '3hours' %}
+            <p><strong>Check-out Time:</strong> {{ booking.checkout_time }}</p>
+        {% endif %}
+
+        {% if booking.pickup == 'yes' %}
+            <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
+        {% endif %}
+
+        {% if booking.special %}
+            <p><strong>Special Notes:</strong> {{ booking.special }}</p>
+        {% endif %}
+
+        <hr>
+        <h2>Total Amount Due: <span style="color: green;">R{{ booking.total_amount }}</span></h2>
+
+        <form action="{{ url_for('payment') }}" method="POST">
+            <input type="hidden" name="confirm" value="yes">
+            <button type="submit" style="padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 16px;">
+                Confirm Payment
+            </button>
+        </form>
+    </section>
+
+</body>
+</html>
