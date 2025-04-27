@@ -1,34 +1,38 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from werkzeug.utils import secure_filename
+from email.mime.application import MIMEApplication
 import os
 
 app = Flask(__name__)
-app.secret_key = 'Mcoboti@002'  # Secret key for sessions
+app.secret_key = 'Mcoboti@002'
 
-# Email settings
+# --------------- Email Settings ---------------
 EMAIL_ADDRESS = 'mcoresidence@gmail.com'
 EMAIL_PASSWORD = 'lftiiuewhdhfurvs'
 RECEIVER_EMAIL = 'mcoresidence@gmail.com'
 
-# Upload settings
+# --------------- Upload Settings ---------------
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Home page
+# Make sure upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# --------------- Routes ---------------
+
+# Home Page
 @app.route('/')
 def index():
     images = ['a.JPG', 'b.JPG', 'c.JPG', 'd.JPG', 'e.JPG', 'f.JPG', 'g.JPG', 'h.JPG']
     return render_template('index.html', images=images)
 
-# Booking page
+# Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if request.method == 'POST':
-        # Get form data
         name = request.form['name']
         email = request.form['email']
         phone = request.form['phone']
@@ -39,7 +43,7 @@ def booking():
         pickup_location = request.form.get('pickup_location')
         special = request.form.get('special')
 
-        # Calculate total amount
+        # Calculate price
         if booking_option == 'night':
             total_amount = 450
             booking_option_display = 'Night (R450)'
@@ -53,7 +57,7 @@ def booking():
             total_amount = 0
             booking_option_display = 'Unknown'
 
-        # Calculate checkout time if needed
+        # Checkout time
         checkout_time = None
         if booking_option == 'hour':
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
@@ -62,7 +66,7 @@ def booking():
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
             checkout_time = (checkin_datetime + timedelta(hours=2)).strftime('%H:%M')
 
-        # Save booking to session
+        # Save booking session
         session['booking'] = {
             'name': name,
             'email': email,
@@ -82,7 +86,7 @@ def booking():
 
     return render_template('booking.html')
 
-# Payment page
+# Payment Page
 @app.route('/payment', methods=['GET', 'POST'])
 def payment():
     booking = session.get('booking')
@@ -90,37 +94,35 @@ def payment():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        payment_method = request.form.get('payment_method')
+        payment_method = request.form['payment_method']
 
         if payment_method == 'online':
-            # Redirect to PayFast
-            payfast_link = "https://www.payfast.co.za/eng/process?merchant_id=14070761&merchant_key=t9gho8csdpkwd&amount={}&item_name=Booking".format(booking['total_amount'])
-            return redirect(payfast_link)
-
+            # Redirect to PayFast portal
+            return redirect('https://www.payfast.co.za/eng/process?merchant_id=14070761&merchant_key=t9gho8csdpkwd&amount=' + str(booking['total_amount']))
+        
         elif payment_method == 'manual':
-            # Handle manual proof upload
-            file = request.files['proof_file']
-            if file:
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(filepath)
+            # Manual payment: Upload proof
+            if 'proof' not in request.files:
+                return "No proof file uploaded!", 400
+            file = request.files['proof']
+            if file.filename == '':
+                return "No selected file!", 400
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(file_path)
 
-                send_manual_payment_email(booking, filepath)
-
-                # Optional: delete after sending
-                os.remove(filepath)
-
+            send_emails(booking, file_path)
             return redirect(url_for('success'))
 
     return render_template('payment.html', booking=booking)
 
-# Success page
+# Success Page
 @app.route('/success')
 def success():
     return render_template('success.html')
 
-# Send normal booking email
-def send_emails(booking):
+# --------------- Email Functions ---------------
+
+def send_emails(booking, proof_path=None):
     subject = f"Booking Confirmation - {booking['name']}"
     body = f"""
     Booking Details:
@@ -133,7 +135,7 @@ def send_emails(booking):
     """
 
     if booking['booking_option'] == 'night':
-        body += "\nCheckout Time: Before 11:00 AM"
+        body += "\nCheckout: Next Day before 11:00 AM"
     else:
         body += f"\nCheckout Time: {booking['checkout_time']}"
 
@@ -147,57 +149,27 @@ def send_emails(booking):
 
     # Email to client
     send_email(booking['email'], subject, body)
-    # Email to owner
-    send_email(RECEIVER_EMAIL, subject, body)
+    # Email to owner with proof if manual
+    send_email(RECEIVER_EMAIL, subject, body, proof_path)
 
-# Send manual payment email (with attachment)
-def send_manual_payment_email(booking, filepath):
-    subject = f"Manual Payment Proof - {booking['name']}"
-    body = f"""
-    Manual Payment Received:
-
-    Name: {booking['name']}
-    Email: {booking['email']}
-    Phone: {booking['phone']}
-    Booking Option: {booking['booking_option_display']}
-    Check-in: {booking['checkin_date']} at {booking['checkin_time']}
-    """
-
-    if booking['booking_option'] == 'night':
-        body += "\nCheckout Time: Before 11:00 AM"
-    else:
-        body += f"\nCheckout Time: {booking['checkout_time']}"
-
-    msg = MIMEMultipart()
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = RECEIVER_EMAIL
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
-
-    with open(filepath, 'rb') as f:
-        from email.mime.application import MIMEApplication
-        part = MIMEApplication(f.read(), Name=os.path.basename(filepath))
-        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(filepath)}"'
-        msg.attach(part)
-
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-        smtp.starttls()
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(msg)
-
-# Actual email sender
-def send_email(to_email, subject, body):
+def send_email(to_email, subject, body, attachment_path=None):
     msg = MIMEMultipart()
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = to_email
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
 
+    if attachment_path:
+        with open(attachment_path, 'rb') as f:
+            file = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
+        file['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+        msg.attach(file)
+
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
 
-# Run app
+# --------------- Run Server ---------------
 if __name__ == '__main__':
     app.run(debug=True)
