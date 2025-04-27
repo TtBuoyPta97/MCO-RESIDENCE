@@ -8,18 +8,18 @@
 <body>
 
     <!-- Logo -->
-    <header>
-        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" style="width: 200px; height: auto;">
+    <header class="header">
+        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo">
     </header>
 
     <!-- About Section -->
-    <section>
+    <section class="about">
         <h1>Welcome to MCO Residence</h1>
         <p>Your home away from home. Comfortable, affordable, and located at the heart of Lusikisiki.</p>
     </section>
 
     <!-- Contact Section -->
-    <section>
+    <section class="contact">
         <h2>Contact Us</h2>
         <p><strong>Phone:</strong> 071 886 0582</p>
         <p><strong>Email:</strong> <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
@@ -27,23 +27,25 @@
     </section>
 
     <!-- Social Media Links -->
-    <section>
+    <section class="social">
         <h2>Follow Us</h2>
-        <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a> |
-        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a> |
+        <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a>
+        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a>
         <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
     </section>
 
     <!-- Gallery Section -->
-    <section>
+    <section class="gallery-section">
         <h2>Gallery</h2>
-        {% for img in images %}
-            <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image" style="width: 200px; height: auto; margin: 5px;">
-        {% endfor %}
+        <div class="gallery">
+            {% for img in images %}
+                <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image">
+            {% endfor %}
+        </div>
     </section>
 
     <!-- Booking Button -->
-    <section>
+    <section class="booking">
         <a href="{{ url_for('booking') }}">
             <button>Book Now</button>
         </a>
