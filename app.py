@@ -5,29 +5,24 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
-app.secret_key = 'Mcoboti@002'  # Important for saving user info during booking
+app.secret_key = 'Mcoboti@002'  # Secret key for sessions
 
-# ---------------------------
 # Email settings
-# ---------------------------
 EMAIL_ADDRESS = 'mcoresidence@gmail.com'
 EMAIL_PASSWORD = 'lftiiuewhdhfurvs'
-RECEIVER_EMAIL = 'mcoresidence@gmail.com'  # where you receive the bookings
-
-# ---------------------------
-# Routes
-# ---------------------------
+RECEIVER_EMAIL = 'mcoresidence@gmail.com'
 
 # Home page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    images = ['a.JPG', 'b.JPG', 'c.JPG', 'd.JPG', 'e.JPG', 'f.JPG', 'g.JPG', 'h.JPG']
+    return render_template('index.html', images=images)
 
-# Booking page (GET to show form, POST to handle form data)
+# Booking page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if request.method == 'POST':
-        # Collect form data
+        # Get form data
         name = request.form['name']
         email = request.form['email']
         phone = request.form['phone']
@@ -52,7 +47,7 @@ def booking():
             total_amount = 0
             booking_option_display = 'Unknown'
 
-        # Calculate automatic checkout time if needed
+        # Calculate checkout time if needed
         checkout_time = None
         if booking_option == 'hour':
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
@@ -61,7 +56,7 @@ def booking():
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
             checkout_time = (checkin_datetime + timedelta(hours=3)).strftime('%H:%M')
 
-        # Save booking in session
+        # Save booking to session
         session['booking'] = {
             'name': name,
             'email': email,
@@ -85,12 +80,10 @@ def booking():
 @app.route('/payment', methods=['GET', 'POST'])
 def payment():
     booking = session.get('booking')
-
     if not booking:
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        # Payment confirmed
         send_emails(booking)
         return redirect(url_for('success'))
 
@@ -101,11 +94,8 @@ def payment():
 def success():
     return render_template('success.html')
 
-# ---------------------------
-# Helper: Send emails
-# ---------------------------
+# Send email function
 def send_emails(booking):
-    # Create the email content
     subject = f"Booking Confirmation - {booking['name']}"
     body = f"""
     Booking Details:
@@ -132,13 +122,10 @@ def send_emails(booking):
 
     # Email to client
     send_email(booking['email'], subject, body)
-
-    # Email to you
+    # Email to owner
     send_email(RECEIVER_EMAIL, subject, body)
 
-# ---------------------------
-# Helper: Actually send an email
-# ---------------------------
+# Actual email sending
 def send_email(to_email, subject, body):
     msg = MIMEMultipart()
     msg['From'] = EMAIL_ADDRESS
@@ -147,14 +134,11 @@ def send_email(to_email, subject, body):
 
     msg.attach(MIMEText(body, 'plain'))
 
-    # Connect and send
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
 
-# ---------------------------
-# Run the app
-# ---------------------------
+# Run app
 if __name__ == '__main__':
     app.run(debug=True)
