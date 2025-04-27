@@ -1,33 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Successful</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
-    <style>
-        .success-icon {
-            font-size: 80px;
-            color: green;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Successful - MCO Residence</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
+  <style>
+    .success-container {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .success-icon {
+      font-size: 90px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    .success-container h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .success-container p {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .success-container a button {
+      background-color: #28a745;
+      border: none;
+      padding: 12px 30px;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .success-container a button:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
 
-<header class="container">
-    <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo">
+<!-- Header with logo -->
+<header class="header">
+  <div class="container">
+    <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+  </div>
 </header>
 
-<section class="container success">
-    <div class="success-icon">✅</div>
-    <h1>Thank You!</h1>
-    <p>Your booking was successful. 🏡</p>
-    <p>We have sent a confirmation email to you.</p>
-    <br>
-    <a href="{{ url_for('index') }}">
-        <button>Back to Home</button>
-    </a>
+<!-- Success Section -->
+<section class="success-container">
+  <div class="success-icon">✅</div>
+  <h1>Thank You!</h1>
+  <p>Your booking was successful. 🏡</p>
+  <p>We have sent a confirmation email to you.</p>
+  
+  <a href="{{ url_for('index') }}">
+    <button>Back to Home</button>
+  </a>
 </section>
 
 </body>
