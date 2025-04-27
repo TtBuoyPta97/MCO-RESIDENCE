@@ -11,7 +11,6 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
-            <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
             <div class="nav-links">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('booking') }}">Booking</a>
@@ -21,38 +20,44 @@
 
     <!-- Main Content -->
     <main class="container">
-        <h1>Complete Your Payment</h1>
+        <h1>Payment</h1>
 
-        <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
-        <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
+        <div class="booking-summary">
+            <h2>Booking Summary</h2>
+            <p><strong>Name:</strong> {{ booking.name }}</p>
+            <p><strong>Email:</strong> {{ booking.email }}</p>
+            <p><strong>Phone:</strong> {{ booking.phone }}</p>
+            <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
+            <p><strong>Check-In:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
+            {% if booking.booking_option == 'night' %}
+                <p><strong>Check-Out Date:</strong> {{ booking.checkout_date }}</p>
+            {% else %}
+                <p><strong>Check-Out Time:</strong> {{ booking.checkout_time }}</p>
+            {% endif %}
+            <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
+        </div>
 
-        <form method="POST" enctype="multipart/form-data">
-            <label for="payment_method">Choose Payment Method:</label>
-            <select id="payment_method" name="payment_method" required>
-                <option value="online">Pay Online</option>
-                <option value="manual">Pay via Bank Transfer (Upload Proof)</option>
+        <form method="POST" action="{{ url_for('payment') }}" enctype="multipart/form-data">
+            <h2>Choose Payment Method:</h2>
+            <select id="payment_method" name="payment_method" onchange="showBankDetails()" required>
+                <option value="online">Online (PayFast)</option>
+                <option value="manual">Manual (Bank Transfer)</option>
             </select>
 
-            <div id="proof_upload" style="display:none; margin-top: 20px;">
-                <label for="proof">Upload Payment Proof:</label>
-                <input type="file" id="proof" name="proof">
+            <div id="bank_details" style="display: none; margin-top: 20px;">
+                <h3>Banking Details:</h3>
+                <p><strong>Bank Name:</strong> Capitec Bank</p>
+                <p><strong>Account Name:</strong> MC0 Residence</p>
+                <p><strong>Account Number:</strong> 1505802447</p>
+                <p><strong>Branch Code:</strong> 470010</p>
+                <p><strong>Reference:</strong> Your Full Name</p>
+
+                <label for="proof">Upload Proof of Payment:</label>
+                <input type="file" id="proof" name="proof" accept="image/*,application/pdf" required>
             </div>
 
             <button type="submit" class="btn">Submit Payment</button>
         </form>
-
-        <script>
-            const paymentMethod = document.getElementById('payment_method');
-            const proofUpload = document.getElementById('proof_upload');
-
-            paymentMethod.addEventListener('change', function() {
-                if (this.value === 'manual') {
-                    proofUpload.style.display = 'block';
-                } else {
-                    proofUpload.style.display = 'none';
-                }
-            });
-        </script>
     </main>
 
     <!-- Footer -->
@@ -61,6 +66,18 @@
             <p>&copy; 2025 MCO Residence. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+    function showBankDetails() {
+        var method = document.getElementById('payment_method').value;
+        var bankDetails = document.getElementById('bank_details');
+        if (method === 'manual') {
+            bankDetails.style.display = 'block';
+        } else {
+            bankDetails.style.display = 'none';
+        }
+    }
+    </script>
 
 </body>
 </html>
