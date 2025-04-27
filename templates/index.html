@@ -12,12 +12,6 @@
         <h1>MCO Residence</h1>
     </header>
 
-    <nav class="social-links">
-        <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a>
-        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a>
-        <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
-    </nav>
-
     <section class="about">
         <h2>About Us</h2>
         <p>Welcome to MCO Residence - your home away from home, offering comfortable guest residencies in Lusikisiki.</p>
@@ -41,6 +35,21 @@
             <img src="{{ url_for('static', filename='images/f.JPG') }}" alt="Gallery Image 6">
             <img src="{{ url_for('static', filename='images/g.JPG') }}" alt="Gallery Image 7">
             <img src="{{ url_for('static', filename='images/h.JPG') }}" alt="Gallery Image 8">
+        </div>
+    </section>
+
+    <section class="social-section">
+        <h2>Connect with Us</h2>
+        <div class="social-buttons">
+            <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">
+                <img src="{{ url_for('static', filename='images/whatsapp.png') }}" alt="WhatsApp">
+            </a>
+            <a href="https://www.tiktok.com/@mco0021" target="_blank">
+                <img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="TikTok">
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">
+                <img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook">
+            </a>
         </div>
     </section>
 
