@@ -2,31 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Success - MCO Residence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success | MCO Residence</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styleii.css') }}">
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container">
             <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('booking') }}">Booking</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
-    <main class="container center">
+    <main class="container">
         <h1>Thank You!</h1>
-        <p>Your booking has been successfully submitted.</p>
-        <p>We will contact you shortly to confirm your stay at MCO Residence.</p>
-
+        <p>Your booking has been received. We will be in touch soon to confirm your reservation.</p>
         <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
     </main>
 
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 MCO Residence. All Rights Reserved.</p>
+            <p>&copy; 2025 MCO Residence. All rights reserved.</p>
         </div>
     </footer>
 
