@@ -40,9 +40,9 @@ def booking():
         elif booking_option == 'hour':
             total_amount = 150
             booking_option_display = '1 Hour (R150)'
-        elif booking_option == '3hours':
+        elif booking_option == '2hours':
             total_amount = 250
-            booking_option_display = '3 Hours (R250)'
+            booking_option_display = '2 Hours (R250)'
         else:
             total_amount = 0
             booking_option_display = 'Unknown'
