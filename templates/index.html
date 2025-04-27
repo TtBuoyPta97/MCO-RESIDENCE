@@ -7,46 +7,45 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <body>
+    <header>
+        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+        <h1>MCO Residence</h1>
+    </header>
 
-<!-- Header with logo -->
-<header>
-    <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Logo" class="logo">
-</header>
-
-<!-- About Section -->
-<section class="about-section">
-    <h2>About Us</h2>
-    <p>Welcome to MCO Residence. Your comfort is our priority. Enjoy your stay with us!</p>
-</section>
-
-<!-- Contact Section -->
-<section class="contact-section">
-    <h2>Contact Us</h2>
-    <p>Phone: 071 886 0582</p>
-    <p>Email: <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
-    <p>Location: Magwa road, Lusikisiki, 4820</p>
-
-    <div class="social-buttons">
+    <nav class="social-links">
         <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a>
-        <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
         <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a>
-    </div>
-</section>
+        <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
+    </nav>
 
-<!-- Gallery Section -->
-<section class="gallery-section">
-    <h2>Gallery</h2>
-    <div class="gallery">
-        {% for img in images %}
-            <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image" class="gallery-img">
-        {% endfor %}
-    </div>
-</section>
+    <section class="about">
+        <h2>About Us</h2>
+        <p>Welcome to MCO Residence - your home away from home, offering comfortable guest residencies in Lusikisiki.</p>
+    </section>
 
-<!-- Booking Button -->
-<div class="book-now">
-    <a href="{{ url_for('booking') }}" class="book-btn">Book Now</a>
-</div>
+    <section class="contact">
+        <h2>Contact Us</h2>
+        <p>Phone: 071 886 0582</p>
+        <p>Email: <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
+        <p>Location: Magwa Road, Lusikisiki, 4820</p>
+    </section>
 
+    <section class="gallery-section">
+        <h2>Gallery</h2>
+        <div class="gallery">
+            <img src="{{ url_for('static', filename='images/a.JPG') }}" alt="Gallery Image 1">
+            <img src="{{ url_for('static', filename='images/b.JPG') }}" alt="Gallery Image 2">
+            <img src="{{ url_for('static', filename='images/c.JPG') }}" alt="Gallery Image 3">
+            <img src="{{ url_for('static', filename='images/d.JPG') }}" alt="Gallery Image 4">
+            <img src="{{ url_for('static', filename='images/e.JPG') }}" alt="Gallery Image 5">
+            <img src="{{ url_for('static', filename='images/f.JPG') }}" alt="Gallery Image 6">
+            <img src="{{ url_for('static', filename='images/g.JPG') }}" alt="Gallery Image 7">
+            <img src="{{ url_for('static', filename='images/h.JPG') }}" alt="Gallery Image 8">
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 MCO Residence. All rights reserved.</p>
+    </footer>
 </body>
 </html>
