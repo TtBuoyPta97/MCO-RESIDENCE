@@ -50,13 +50,18 @@
             <input type="date" id="checkout_date" name="checkout_date">
 
             <label>Do you need pickup?</label>
-            <select id="pickup" name="pickup" required>
+            <select id="pickup" name="pickup" onchange="showPickupLocation(this.value)" required>
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
-            <label for="pickup_location">Pickup Location (if yes):</label>
-            <input type="text" id="pickup_location" name="pickup_location">
+            <div id="pickup_location_div" style="display:none;">
+                <label for="pickup_location">Pickup Location (if yes):</label>
+                <select id="pickup_location" name="pickup_location">
+                    <option value="Sasol Garage">Sasol Garage</option>
+                    <option value="Engen Garage">Engen Garage</option>
+                </select>
+            </div>
 
             <label for="special">Special Requests:</label>
             <textarea id="special" name="special"></textarea>
@@ -71,6 +76,17 @@
             <p>&copy; 2025 MCO Residence. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+    function showPickupLocation(value) {
+        var pickupDiv = document.getElementById('pickup_location_div');
+        if (value === 'yes') {
+            pickupDiv.style.display = 'block';
+        } else {
+            pickupDiv.style.display = 'none';
+        }
+    }
+    </script>
 
 </body>
 </html>
