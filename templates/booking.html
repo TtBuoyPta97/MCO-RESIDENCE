@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
 </head>
 <body>
     <header>
         <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
-        <h1>Booking Form</h1>
+        <h1>MCO Residence - Booking</h1>
     </header>
 
-    <section class="booking-form">
+    <main class="booking-form">
+        <h2>Book Your Stay</h2>
         <form action="{{ url_for('booking') }}" method="POST">
             <label for="name">Full Name:</label>
             <input type="text" id="name" name="name" required>
@@ -20,60 +21,76 @@
             <label for="email">Email Address:</label>
             <input type="email" id="email" name="email" required>
 
-            <label for="phone">Cell Number:</label>
+            <label for="phone">Phone Number:</label>
             <input type="text" id="phone" name="phone" required>
 
             <label for="booking_option">Booking Option:</label>
-            <select id="booking_option" name="booking_option" required>
-                <option value="">--Select an option--</option>
+            <select id="booking_option" name="booking_option" required onchange="toggleCheckout()">
+                <option value="">-- Select an Option --</option>
                 <option value="night">Night (R450)</option>
                 <option value="hour">1 Hour (R150)</option>
-                <option value="3hours">3 Hours (R250)</option>
+                <option value="3hours">2 Hours (R250)</option>
             </select>
 
-            <label for="checkin_date">Check-In Date:</label>
+            <div id="checkoutSection" style="display:none;">
+                <label for="checkout_date">Checkout Date:</label>
+                <input type="date" id="checkout_date" name="checkout_date">
+                <small>Note: Checkout time is before 11:00 AM.</small>
+            </div>
+
+            <label for="checkin_date">Check-in Date:</label>
             <input type="date" id="checkin_date" name="checkin_date" required>
 
-            <label for="checkin_time">Check-In Time:</label>
+            <label for="checkin_time">Check-in Time:</label>
             <input type="time" id="checkin_time" name="checkin_time" required>
 
-            <label for="pickup">Require Pick-Up?</label>
-            <select id="pickup" name="pickup" required>
-                <option value="">--Select--</option>
+            <label for="pickup">Do you require pickup?</label>
+            <select id="pickup" name="pickup" required onchange="togglePickupLocation()">
+                <option value="">-- Select --</option>
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
-            <div id="pickup-location-section" style="display:none;">
-                <label for="pickup_location">Pick-Up Location:</label>
+            <div id="pickupLocationSection" style="display:none;">
+                <label for="pickup_location">Pickup Location:</label>
                 <select id="pickup_location" name="pickup_location">
-                    <option value="">--Select Location--</option>
-                    <option value="Salol Garage">Salol Garage</option>
+                    <option value="">-- Select Location --</option>
+                    <option value="Sasol Garage">Sasol Garage</option>
                     <option value="Engen Garage">Engen Garage</option>
                 </select>
             </div>
 
-            <label for="special">Special Requests:</label>
+            <label for="special">Special Request (Optional):</label>
             <textarea id="special" name="special" rows="4"></textarea>
 
-            <button type="submit" class="btn">Proceed to Payment</button>
+            <button type="submit" class="book-button">Proceed to Payment</button>
         </form>
-    </section>
+    </main>
 
     <footer>
         <p>&copy; 2025 MCO Residence. All rights reserved.</p>
     </footer>
 
     <script>
-        // Show pickup location select if "Yes" is selected
-        document.getElementById('pickup').addEventListener('change', function() {
-            var pickupLocationSection = document.getElementById('pickup-location-section');
-            if (this.value === 'yes') {
+        function toggleCheckout() {
+            const bookingOption = document.getElementById('booking_option').value;
+            const checkoutSection = document.getElementById('checkoutSection');
+            if (bookingOption === 'night') {
+                checkoutSection.style.display = 'block';
+            } else {
+                checkoutSection.style.display = 'none';
+            }
+        }
+
+        function togglePickupLocation() {
+            const pickup = document.getElementById('pickup').value;
+            const pickupLocationSection = document.getElementById('pickupLocationSection');
+            if (pickup === 'yes') {
                 pickupLocationSection.style.display = 'block';
             } else {
                 pickupLocationSection.style.display = 'none';
             }
-        });
+        }
     </script>
 </body>
 </html>
