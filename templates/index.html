@@ -3,70 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
     <!-- Logo -->
-    <header style="text-align: center; margin-top: 20px;">
-        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Logo" style="width: 300px; height: auto;">
+    <header>
+        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" style="width: 200px; height: auto;">
     </header>
 
     <!-- About Section -->
-    <section style="text-align: center; margin: 40px 20px;">
+    <section>
         <h1>Welcome to MCO Residence</h1>
-        <p>Your comfort is our priority. Whether you need a night stay or a few hours to rest, we have you covered with affordable and quality service.</p>
+        <p>Your home away from home. Comfortable, affordable, and located at the heart of Lusikisiki.</p>
+    </section>
+
+    <!-- Contact Section -->
+    <section>
+        <h2>Contact Us</h2>
+        <p><strong>Phone:</strong> 071 886 0582</p>
+        <p><strong>Email:</strong> <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
+        <p><strong>Location:</strong> Magwa Road, Lusikisiki, 4820</p>
+    </section>
+
+    <!-- Social Media Links -->
+    <section>
+        <h2>Follow Us</h2>
+        <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a> |
+        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a> |
+        <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
     </section>
 
     <!-- Gallery Section -->
-    <section style="text-align: center; margin: 40px 20px;">
+    <section>
         <h2>Gallery</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-            {% for image in ['a.JPG', 'b.JPG', 'c.JPG', 'd.JPG', 'e.JPG', 'f.JPG', 'g.JPG', 'h.JPG'] %}
-                <img src="{{ url_for('static', filename='images/' + image) }}" alt="Room Image" style="width: 200px; height: 150px; object-fit: cover;">
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- Contact Details Section -->
-    <section style="text-align: center; margin: 40px 20px;">
-        <h2>Contact Us</h2>
-        <p>Phone: 071 886 0582</p>
-
-        <!-- Social Buttons -->
-        <div style="margin-top: 20px;">
-            <!-- WhatsApp Button -->
-            <a href="https://wa.me/your-number-here" target="_blank" style="text-decoration: none;">
-                <button style="padding: 10px 20px; background-color: #25D366; color: white; border: none; border-radius: 5px; margin: 5px;">
-                    WhatsApp
-                </button>
-            </a>
-
-            <!-- Facebook Button -->
-            <a href="https://facebook.com/your-page-link" target="_blank" style="text-decoration: none;">
-                <button style="padding: 10px 20px; background-color: #3b5998; color: white; border: none; border-radius: 5px; margin: 5px;">
-                    Facebook
-                </button>
-            </a>
-
-            <!-- TikTok Button -->
-            <a href="https://tiktok.com/@your-page-link" target="_blank" style="text-decoration: none;">
-                <button style="padding: 10px 20px; background-color: #000000; color: white; border: none; border-radius: 5px; margin: 5px;">
-                    TikTok
-                </button>
-            </a>
-        </div>
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image" style="width: 200px; height: auto; margin: 5px;">
+        {% endfor %}
     </section>
 
     <!-- Booking Button -->
-    <section style="text-align: center; margin: 40px 20px;">
+    <section>
         <a href="{{ url_for('booking') }}">
-            <button style="padding: 15px 30px; font-size: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 10px;">
-                Book Now
-            </button>
+            <button>Book Now</button>
         </a>
     </section>
 
 </body>
 </html>
-
