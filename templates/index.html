@@ -10,13 +10,17 @@
     <header>
         <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
         <h1>MCO Residence</h1>
-        <a href="{{ url_for('booking') }}" class="book-button">Book Now</a>
     </header>
 
     <section class="about">
         <h2>About Us</h2>
         <p>Welcome to MCO Residence - your home away from home, offering comfortable guest residencies in Lusikisiki.</p>
     </section>
+
+    <!-- BOOK NOW BUTTON after About Us -->
+    <div class="book-now-section">
+        <a href="{{ url_for('booking') }}" class="book-button">Book Now</a>
+    </div>
 
     <section class="contact">
         <h2>Contact Us</h2>
