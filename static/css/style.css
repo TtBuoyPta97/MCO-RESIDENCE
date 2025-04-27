@@ -1,1 +1,112 @@
+/* General body style */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #d1d1d1, #ffffff);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header style */
+header {
+    text-align: center;
+    padding: 30px 0;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo style */
+.logo {
+    width: 250px;
+    height: auto;
+    border-radius: 20px;
+}
+
+/* Section styles */
+.about-section, .contact-section, .gallery-section {
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    color: #000;
+    text-align: center;
+}
+
+/* Section headings */
+.about-section h2, .contact-section h2, .gallery-section h2 {
+    margin-bottom: 20px;
+    font-size: 32px;
+    color: #222;
+}
+
+/* Paragraphs */
+.about-section p, .contact-section p {
+    font-size: 18px;
+    color: #444;
+}
+
+/* Social buttons */
+.social-buttons a {
+    margin: 10px;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.social-buttons a:hover {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    transform: scale(1.05);
+}
+
+/* Gallery layout */
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.gallery img {
+    width: 260px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+
+/* Book Now button */
+.book-now {
+    text-align: center;
+    margin: 50px 0;
+}
+
+.book-btn {
+    padding: 15px 40px;
+    font-size: 20px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.book-btn:hover {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    transform: scale(1.1);
+}
 
