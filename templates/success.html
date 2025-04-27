@@ -2,27 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Booking Successful - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Successful</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
+    <style>
+        .success-icon {
+            font-size: 80px;
+            color: green;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
-    <header style="text-align: center; margin-top: 20px;">
-        <h1>Booking Successful!</h1>
-    </header>
+<header class="container">
+    <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo">
+</header>
 
-    <section style="max-width: 600px; margin: 40px auto; text-align: center; font-size: 18px;">
-        <p>Thank you for booking with <strong>MCO Residence</strong>.</p>
-        <p>Your booking details have been received.</p>
-        <p>A confirmation email has been sent to you.</p>
-        <p>We look forward to welcoming you!</p>
-
-        <a href="{{ url_for('index') }}">
-            <button style="padding: 12px 25px; margin-top: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 16px;">
-                Back to Home
-            </button>
-        </a>
-    </section>
+<section class="container success">
+    <div class="success-icon">✅</div>
+    <h1>Thank You!</h1>
+    <p>Your booking was successful. 🏡</p>
+    <p>We have sent a confirmation email to you.</p>
+    <br>
+    <a href="{{ url_for('index') }}">
+        <button>Back to Home</button>
+    </a>
+</section>
 
 </body>
 </html>
