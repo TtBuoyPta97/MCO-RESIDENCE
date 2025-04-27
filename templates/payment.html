@@ -3,82 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Payment - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
-</head>
-<body>
-
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/mco_landscape.jpeg') }}" alt="MCO Residence Logo">
-        </div>
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('booking') }}">Book Now</a>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main class="payment-container">
-        <h1>Payment Details</h1>
-
-        <div class="payment-summary">
-            <h2>Booking Summary</h2>
-            <p><strong>Name:</strong> {{ booking.name }}</p>
-            <p><strong>Email:</strong> {{ booking.email }}</p>
-            <p><strong>Phone:</strong> {{ booking.phone }}</p>
-            <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
-            <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
-            {% if booking.booking_option == 'night' %}
-                <p><strong>Checkout:</strong> Next day before 11:00 AM</p>
-            {% else %}
-                <p><strong>Checkout:</strong> {{ booking.checkout_time }}</p>
-            {% endif %}
-            <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
-        </div>
-
-        <form method="POST" enctype="multipart/form-data" class="payment-form">
-            <label for="payment_method"><strong>Select Payment Method:</strong></label>
-            <select name="payment_method" id="payment_method" onchange="toggleProofUpload()" required>
-                <option value="">-- Choose Option --</option>
-                <option value="online">Pay Online (via PayFast)</option>
-                <option value="manual">Manual Payment (Bank Transfer)</option>
-            </select>
-
-            <div id="manualPaymentInfo" style="display:none; margin-top:20px;">
-                <h3>Bank Details:</h3>
-                <p><strong>Account Name:</strong> Amangcikwa Holdings PTY Ltd</p>
-                <p><strong>Account Number:</strong> 10233031039</p>
-                <p><strong>Bank:</strong> Standard Bank</p>
-
-                <label for="proof" style="margin-top:15px;">Upload Proof of Payment:</label>
-                <input type="file" name="proof" id="proof">
-            </div>
-
-            <button type="submit" class="btn">Proceed</button>
-        </form>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <p>© 2025 MCO Residence. All rights reserved.</p>
-    </footer>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background: #f2f2f2;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input[type="file"], button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        #proof-upload {
+            display: none;
+        }
+    </style>
 
     <script>
         function toggleProofUpload() {
             var paymentMethod = document.getElementById('payment_method').value;
-            var manualInfo = document.getElementById('manualPaymentInfo');
-            var proofInput = document.getElementById('proof');
-
+            var proofDiv = document.getElementById('proof-upload');
             if (paymentMethod === 'manual') {
-                manualInfo.style.display = 'block';
-                proofInput.required = true;
+                proofDiv.style.display = 'block';
             } else {
-                manualInfo.style.display = 'none';
-                proofInput.required = false;
+                proofDiv.style.display = 'none';
             }
         }
     </script>
+</head>
 
+<body>
+    <div class="container">
+        <h1>Confirm Your Payment</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Name:</label>
+                <div>{{ booking.name }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>Booking Option:</label>
+                <div>{{ booking.booking_option_display }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>Check-in:</label>
+                <div>{{ booking.checkin_date }} at {{ booking.checkin_time }}</div>
+            </div>
+
+            {% if booking.booking_option == 'night' %}
+            <div class="form-group">
+                <label>Checkout Date:</label>
+                <div>{{ booking.checkout_date }} (Before 11:00 AM)</div>
+            </div>
+            {% else %}
+            <div class="form-group">
+                <label>Checkout Time:</label>
+                <div>{{ booking.checkout_time }}</div>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>Total Amount:</label>
+                <div>R{{ booking.total_amount }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>Choose Payment Method:</label>
+                <select id="payment_method" name="payment_method" onchange="toggleProofUpload()" required>
+                    <option value="">-- Select --</option>
+                    <option value="online">Pay Online (PayFast)</option>
+                    <option value="manual">Manual Payment (Upload Proof)</option>
+                </select>
+            </div>
+
+            <div id="proof-upload" class="form-group">
+                <label>Upload Payment Proof:</label>
+                <input type="file" name="proof" accept="image/*,application/pdf" />
+            </div>
+
+            <button type="submit">Proceed</button>
+        </form>
+    </div>
 </body>
 </html>
