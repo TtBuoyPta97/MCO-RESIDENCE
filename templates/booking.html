@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleii.css') }}">
 </head>
 <body>
 
+    <!-- Header -->
     <header class="header">
         <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
         <nav>
@@ -15,86 +17,87 @@
         </nav>
     </header>
 
-    <main class="form-container">
+    <!-- Main Content -->
+    <div class="container">
         <h1>Book Your Stay</h1>
-        <form method="POST" action="{{ url_for('booking') }}">
-            <label>Full Name</label>
-            <input type="text" name="name" required>
+        <form action="{{ url_for('booking') }}" method="POST" class="form">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
 
-            <label>Email Address</label>
-            <input type="email" name="email" required>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required>
 
-            <label>Phone Number</label>
-            <input type="text" name="phone" required>
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" required>
 
-            <label>Booking Option</label>
-            <select name="booking_option" id="booking_option" required onchange="toggleCheckoutDate()">
+            <label for="booking_option">Booking Option:</label>
+            <select id="booking_option" name="booking_option" required onchange="toggleCheckoutDate()">
                 <option value="">Select Option</option>
                 <option value="night">Night (R450)</option>
                 <option value="hour">1 Hour (R150)</option>
                 <option value="2hours">2 Hours (R250)</option>
             </select>
 
-            <div id="checkin">
-                <label>Check-in Date</label>
-                <input type="date" name="checkin_date" required>
+            <label for="checkin_date">Check-in Date:</label>
+            <input type="date" id="checkin_date" name="checkin_date" required>
 
-                <label>Check-in Time</label>
-                <input type="time" name="checkin_time" required>
+            <div id="checkout_date_container" style="display:none;">
+                <label for="checkout_date">Check-out Date:</label>
+                <input type="date" id="checkout_date" name="checkout_date">
             </div>
 
-            <div id="checkout" style="display: none;">
-                <label>Check-out Date</label>
-                <input type="date" name="checkout_date">
-            </div>
+            <label for="checkin_time">Check-in Time:</label>
+            <input type="time" id="checkin_time" name="checkin_time" required>
 
-            <label>Pickup Service</label>
-            <select name="pickup" id="pickup" required onchange="togglePickupLocation()">
-                <option value="">Select Option</option>
+            <label for="pickup">Need Pickup Service?</label>
+            <select id="pickup" name="pickup" required onchange="togglePickupLocation()">
+                <option value="">Select</option>
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
-            <div id="pickup_location_container" style="display: none;">
-                <label>Pickup Location</label>
-                <select name="pickup_location">
-                    <option value="Mamelodi">Mamelodi (R50)</option>
-                    <option value="Pretoria Central">Pretoria Central (R70)</option>
+            <div id="pickup_location_container" style="display:none;">
+                <label for="pickup_location">Pickup Location:</label>
+                <select id="pickup_location" name="pickup_location">
+                    <option value="">Select Location</option>
+                    <option value="Midrand Gautrain Station">Midrand Gautrain Station</option>
+                    <option value="Mall of Africa">Mall of Africa</option>
                 </select>
             </div>
 
-            <label>Special Requests (Optional)</label>
-            <textarea name="special"></textarea>
+            <label for="special">Special Requests (Optional):</label>
+            <textarea id="special" name="special" rows="4"></textarea>
 
-            <button type="submit">Proceed to Payment</button>
+            <button type="submit" class="button">Proceed to Payment</button>
         </form>
-    </main>
+    </div>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 MCO Residence</p>
+        <p>© 2025 MCO Residence. All rights reserved.</p>
     </footer>
 
-<script>
-    function toggleCheckoutDate() {
-        var option = document.getElementById('booking_option').value;
-        var checkout = document.getElementById('checkout');
-        if (option === 'night') {
-            checkout.style.display = 'block';
-        } else {
-            checkout.style.display = 'none';
+    <script>
+        function toggleCheckoutDate() {
+            const bookingOption = document.getElementById('booking_option').value;
+            const checkoutContainer = document.getElementById('checkout_date_container');
+            if (bookingOption === 'night') {
+                checkoutContainer.style.display = 'block';
+            } else {
+                checkoutContainer.style.display = 'none';
+            }
         }
-    }
 
-    function togglePickupLocation() {
-        var pickup = document.getElementById('pickup').value;
-        var pickupContainer = document.getElementById('pickup_location_container');
-        if (pickup === 'yes') {
-            pickupContainer.style.display = 'block';
-        } else {
-            pickupContainer.style.display = 'none';
+        function togglePickupLocation() {
+            const pickup = document.getElementById('pickup').value;
+            const pickupContainer = document.getElementById('pickup_location_container');
+            if (pickup === 'yes') {
+                pickupContainer.style.display = 'block';
+            } else {
+                pickupContainer.style.display = 'none';
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>
