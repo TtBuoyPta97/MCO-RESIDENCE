@@ -2,107 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleii.css') }}">
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
-        <h1>Book Your Stay</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo">
+        </div>
     </header>
 
-    <section class="booking-form">
-        <form method="POST" action="{{ url_for('booking') }}">
-            <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+    <div class="container">
+        <h1>Book Your Stay</h1>
+        <form action="{{ url_for('booking') }}" method="POST">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
 
-            <div class="form-group">
-                <label for="email">Email Address:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required>
 
-            <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" required>
 
-            <div class="form-group">
-                <label for="booking_option">Booking Option:</label>
-                <select id="booking_option" name="booking_option" required onchange="toggleCheckoutDate()">
-                    <option value="">-- Select --</option>
-                    <option value="night">Night (R450)</option>
-                    <option value="hour">1 Hour (R150)</option>
-                    <option value="2hours">2 Hours (R250)</option>
-                </select>
-            </div>
+            <label for="booking_option">Booking Option:</label>
+            <select id="booking_option" name="booking_option" required onchange="toggleCheckoutDate()">
+                <option value="">-- Select Option --</option>
+                <option value="night">Night (R450)</option>
+                <option value="hour">1 Hour (R150)</option>
+                <option value="2hours">2 Hours (R250)</option>
+            </select>
 
-            <div class="form-group">
+            <div id="checkin">
                 <label for="checkin_date">Check-in Date:</label>
                 <input type="date" id="checkin_date" name="checkin_date" required>
-            </div>
 
-            <div class="form-group" id="checkoutDateField" style="display:none;">
-                <label for="checkout_date">Check-out Date:</label>
-                <input type="date" id="checkout_date" name="checkout_date">
-            </div>
-
-            <div class="form-group">
                 <label for="checkin_time">Check-in Time:</label>
                 <input type="time" id="checkin_time" name="checkin_time" required>
             </div>
 
-            <div class="form-group">
-                <label for="pickup">Require Pickup?</label>
-                <select id="pickup" name="pickup" onchange="togglePickupLocation()">
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                </select>
+            <div id="checkout" style="display:none;">
+                <label for="checkout_date">Check-out Date:</label>
+                <input type="date" id="checkout_date" name="checkout_date">
             </div>
 
-            <div class="form-group" id="pickupLocationField" style="display:none;">
-                <label for="pickup_location">Select Pickup Garage:</label>
+            <label for="pickup">Need Pickup?</label>
+            <select id="pickup" name="pickup" onchange="togglePickupLocation()" required>
+                <option value="">-- Select --</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <div id="pickup_location_div" style="display:none;">
+                <label for="pickup_location">Select Garage:</label>
                 <select id="pickup_location" name="pickup_location">
-                    <option value="">-- Select --</option>
+                    <option value="">-- Choose Garage --</option>
                     <option value="Garage 1">Garage 1</option>
                     <option value="Garage 2">Garage 2</option>
+                    <option value="Garage 3">Garage 3</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="special">Special Requests (Optional):</label>
-                <textarea id="special" name="special" rows="4"></textarea>
-            </div>
+            <label for="special">Special Request (optional):</label>
+            <textarea id="special" name="special" rows="3"></textarea>
 
-            <button type="submit" class="btn">Proceed to Payment</button>
+            <button type="submit">Proceed to Payment</button>
         </form>
-    </section>
+    </div>
 
     <script>
         function toggleCheckoutDate() {
-            const bookingOption = document.getElementById('booking_option').value;
-            const checkoutField = document.getElementById('checkoutDateField');
+            var bookingOption = document.getElementById('booking_option').value;
+            var checkoutDiv = document.getElementById('checkout');
+
             if (bookingOption === 'night') {
-                checkoutField.style.display = 'block';
+                checkoutDiv.style.display = 'block';
                 document.getElementById('checkout_date').required = true;
             } else {
-                checkoutField.style.display = 'none';
+                checkoutDiv.style.display = 'none';
                 document.getElementById('checkout_date').required = false;
             }
         }
 
         function togglePickupLocation() {
-            const pickup = document.getElementById('pickup').value;
-            const pickupLocationField = document.getElementById('pickupLocationField');
+            var pickup = document.getElementById('pickup').value;
+            var pickupDiv = document.getElementById('pickup_location_div');
+
             if (pickup === 'yes') {
-                pickupLocationField.style.display = 'block';
+                pickupDiv.style.display = 'block';
             } else {
-                pickupLocationField.style.display = 'none';
+                pickupDiv.style.display = 'none';
             }
         }
     </script>
-
 </body>
 </html>
