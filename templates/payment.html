@@ -3,47 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Payment - MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
 </head>
 <body>
-
-    <header style="text-align: center; margin-top: 20px;">
-        <h1>Payment Summary</h1>
+    <header>
+        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+        <h1>Payment</h1>
     </header>
 
-    <section style="max-width: 600px; margin: 40px auto; font-size: 16px;">
-        <h2>Booking Details</h2>
-
+    <div class="payment-container">
+        <h2>Booking Summary</h2>
         <p><strong>Name:</strong> {{ booking.name }}</p>
-        <p><strong>Email:</strong> {{ booking.email }}</p>
-        <p><strong>Phone:</strong> {{ booking.phone }}</p>
         <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
         <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
-
         {% if booking.booking_option == 'night' %}
-            <p><strong>Note:</strong> Checkout time is before <strong>11:00 AM</strong> the next day.</p>
-        {% elif booking.booking_option == 'hour' or booking.booking_option == '3hours' %}
-            <p><strong>Check-out Time:</strong> {{ booking.checkout_time }}</p>
+        <p><strong>Check-out:</strong> Next Day Before 11:00 AM</p>
+        {% else %}
+        <p><strong>Check-out:</strong> {{ booking.checkout_time }}</p>
         {% endif %}
+        <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
 
-        {% if booking.pickup == 'yes' %}
-            <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
-        {% endif %}
+        <h2>Select Payment Method</h2>
 
-        {% if booking.special %}
-            <p><strong>Special Notes:</strong> {{ booking.special }}</p>
-        {% endif %}
+        <form action="{{ url_for('payment') }}" method="POST" enctype="multipart/form-data">
+            <label for="payment_method">Choose Payment Method:</label><br><br>
+            <select id="payment_method" name="payment_method" required onchange="showPaymentOption(this.value)">
+                <option value="">--Select--</option>
+                <option value="online">Pay Online (PayFast)</option>
+                <option value="manual">Manual Payment (Bank Transfer)</option>
+            </select>
 
-        <hr>
-        <h2>Total Amount Due: <span style="color: green;">R{{ booking.total_amount }}</span></h2>
+            <div id="manual_payment_info" style="display:none; margin-top:20px;">
+                <h3>Banking Details</h3>
+                <p><strong>Bank Name:</strong> Standard Bank</p>
+                <p><strong>Account Name:</strong> Amangcikwa Holdings PTY Ltd</p>
+                <p><strong>Account Number:</strong> 10233031039</p>
+                <p>Please upload Proof of Payment below:</p>
+                <input type="file" name="proof_file" accept=".jpg,.jpeg,.png,.pdf" required>
+            </div>
 
-        <form action="{{ url_for('payment') }}" method="POST">
-            <input type="hidden" name="confirm" value="yes">
-            <button type="submit" style="padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 16px;">
-                Confirm Payment
-            </button>
+            <div style="margin-top:20px;">
+                <button type="submit">Proceed</button>
+            </div>
         </form>
-    </section>
+    </div>
 
+    <footer>
+        <p>&copy; 2025 MCO Residence. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showPaymentOption(value) {
+            if (value === 'manual') {
+                document.getElementById('manual_payment_info').style.display = 'block';
+            } else {
+                document.getElementById('manual_payment_info').style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
