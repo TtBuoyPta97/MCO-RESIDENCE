@@ -2,54 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <body>
 
-    <!-- Logo -->
-    <header class="header">
-        <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo">
-    </header>
+<!-- Header with logo -->
+<header>
+    <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Logo" class="logo">
+</header>
 
-    <!-- About Section -->
-    <section class="about">
-        <h1>Welcome to MCO Residence</h1>
-        <p>Your home away from home. Comfortable, affordable, and located at the heart of Lusikisiki.</p>
-    </section>
+<!-- About Section -->
+<section class="about-section">
+    <h2>About Us</h2>
+    <p>Welcome to MCO Residence. Your comfort is our priority. Enjoy your stay with us!</p>
+</section>
 
-    <!-- Contact Section -->
-    <section class="contact">
-        <h2>Contact Us</h2>
-        <p><strong>Phone:</strong> 071 886 0582</p>
-        <p><strong>Email:</strong> <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
-        <p><strong>Location:</strong> Magwa Road, Lusikisiki, 4820</p>
-    </section>
+<!-- Contact Section -->
+<section class="contact-section">
+    <h2>Contact Us</h2>
+    <p>Phone: 071 886 0582</p>
+    <p>Email: <a href="mailto:mcoresidence@gmail.com">mcoresidence@gmail.com</a></p>
+    <p>Location: Magwa road, Lusikisiki, 4820</p>
 
-    <!-- Social Media Links -->
-    <section class="social">
-        <h2>Follow Us</h2>
+    <div class="social-buttons">
         <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">WhatsApp</a>
-        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a>
         <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">Facebook</a>
-    </section>
+        <a href="https://www.tiktok.com/@mco0021" target="_blank">TikTok</a>
+    </div>
+</section>
 
-    <!-- Gallery Section -->
-    <section class="gallery-section">
-        <h2>Gallery</h2>
-        <div class="gallery">
-            {% for img in images %}
-                <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image">
-            {% endfor %}
-        </div>
-    </section>
+<!-- Gallery Section -->
+<section class="gallery-section">
+    <h2>Gallery</h2>
+    <div class="gallery">
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='images/' + img) }}" alt="Gallery Image" class="gallery-img">
+        {% endfor %}
+    </div>
+</section>
 
-    <!-- Booking Button -->
-    <section class="booking">
-        <a href="{{ url_for('booking') }}">
-            <button>Book Now</button>
-        </a>
-    </section>
+<!-- Booking Button -->
+<div class="book-now">
+    <a href="{{ url_for('booking') }}" class="book-btn">Book Now</a>
+</div>
 
 </body>
 </html>
