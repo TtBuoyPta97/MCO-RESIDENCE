@@ -3,107 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <title>Payment - MCO Residence</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-            background: #f2f2f2;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        select, input[type="file"], button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-        }
-        #proof-upload {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
+</head>
+<body>
+    <header class="header">
+        <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('booking') }}">Booking</a>
+        </nav>
+    </header>
+
+    <section class="payment-container">
+        <h1>Payment Details</h1>
+
+        <div class="summary">
+            <p><strong>Name:</strong> {{ booking.name }}</p>
+            <p><strong>Email:</strong> {{ booking.email }}</p>
+            <p><strong>Phone:</strong> {{ booking.phone }}</p>
+            <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
+            <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
+
+            {% if booking.booking_option == 'night' %}
+                <p><strong>Checkout:</strong> Next day before 11:00 AM</p>
+            {% else %}
+                <p><strong>Checkout Time:</strong> {{ booking.checkout_time }}</p>
+            {% endif %}
+
+            <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
+
+            {% if booking.pickup == 'yes' %}
+                <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
+            {% endif %}
+            
+            {% if booking.special %}
+                <p><strong>Special Request:</strong> {{ booking.special }}</p>
+            {% endif %}
+        </div>
+
+        <form action="{{ url_for('payment') }}" method="POST" enctype="multipart/form-data" class="payment-form">
+            <label for="payment_method">Choose Payment Method:</label>
+            <select name="payment_method" id="payment_method" required onchange="toggleProofUpload()">
+                <option value="">--Select Payment Method--</option>
+                <option value="online">Online Payment (PayFast)</option>
+                <option value="manual">Manual Payment (Bank Transfer)</option>
+            </select>
+
+            <div id="manual-payment" style="display:none; margin-top:20px;">
+                <p><strong>Bank Details:</strong><br>
+                Amangcikwa Holdings PTY Ltd.<br>
+                Account No: 10233031039<br>
+                Bank: Standard Bank</p>
+
+                <label for="proof">Upload Proof of Payment:</label>
+                <input type="file" name="proof" id="proof" accept=".jpg,.jpeg,.png,.pdf">
+            </div>
+
+            <button type="submit" class="btn">Proceed</button>
+        </form>
+    </section>
 
     <script>
         function toggleProofUpload() {
-            var paymentMethod = document.getElementById('payment_method').value;
-            var proofDiv = document.getElementById('proof-upload');
+            const paymentMethod = document.getElementById('payment_method').value;
+            const manualPaymentSection = document.getElementById('manual-payment');
             if (paymentMethod === 'manual') {
-                proofDiv.style.display = 'block';
+                manualPaymentSection.style.display = 'block';
             } else {
-                proofDiv.style.display = 'none';
+                manualPaymentSection.style.display = 'none';
             }
         }
     </script>
-</head>
 
-<body>
-    <div class="container">
-        <h1>Confirm Your Payment</h1>
-
-        <form method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Name:</label>
-                <div>{{ booking.name }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>Booking Option:</label>
-                <div>{{ booking.booking_option_display }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>Check-in:</label>
-                <div>{{ booking.checkin_date }} at {{ booking.checkin_time }}</div>
-            </div>
-
-            {% if booking.booking_option == 'night' %}
-            <div class="form-group">
-                <label>Checkout Date:</label>
-                <div>{{ booking.checkout_date }} (Before 11:00 AM)</div>
-            </div>
-            {% else %}
-            <div class="form-group">
-                <label>Checkout Time:</label>
-                <div>{{ booking.checkout_time }}</div>
-            </div>
-            {% endif %}
-
-            <div class="form-group">
-                <label>Total Amount:</label>
-                <div>R{{ booking.total_amount }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>Choose Payment Method:</label>
-                <select id="payment_method" name="payment_method" onchange="toggleProofUpload()" required>
-                    <option value="">-- Select --</option>
-                    <option value="online">Pay Online (PayFast)</option>
-                    <option value="manual">Manual Payment (Upload Proof)</option>
-                </select>
-            </div>
-
-            <div id="proof-upload" class="form-group">
-                <label>Upload Payment Proof:</label>
-                <input type="file" name="proof" accept="image/*,application/pdf" />
-            </div>
-
-            <button type="submit">Proceed</button>
-        </form>
-    </div>
 </body>
 </html>
