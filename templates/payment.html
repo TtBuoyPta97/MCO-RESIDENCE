@@ -2,64 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - MCO Residence</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styleii.css') }}">
 </head>
 <body>
     <header>
         <img src="{{ url_for('static', filename='images/mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
-        <h1>Payment</h1>
+        <h1>MCO Residence</h1>
     </header>
 
-    <div class="payment-container">
-        <h2>Booking Summary</h2>
-        <p><strong>Name:</strong> {{ booking.name }}</p>
-        <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
-        <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
-        {% if booking.booking_option == 'night' %}
-        <p><strong>Check-out:</strong> Next Day Before 11:00 AM</p>
-        {% else %}
-        <p><strong>Check-out:</strong> {{ booking.checkout_time }}</p>
-        {% endif %}
-        <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
+    <main class="glass">
+        <h2>Payment Details</h2>
+        <div class="payment-summary">
+            <p><strong>Name:</strong> {{ booking.name }}</p>
+            <p><strong>Email:</strong> {{ booking.email }}</p>
+            <p><strong>Phone:</strong> {{ booking.phone }}</p>
+            <p><strong>Booking:</strong> {{ booking.booking_option_display }}</p>
+            <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
 
-        <h2>Select Payment Method</h2>
+            {% if booking.booking_option == 'night' %}
+                <p><strong>Check-out:</strong> Before 11:00 AM next day</p>
+            {% else %}
+                <p><strong>Check-out:</strong> {{ booking.checkout_time }}</p>
+            {% endif %}
+            
+            <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
+        </div>
 
-        <form action="{{ url_for('payment') }}" method="POST" enctype="multipart/form-data">
-            <label for="payment_method">Choose Payment Method:</label><br><br>
-            <select id="payment_method" name="payment_method" required onchange="showPaymentOption(this.value)">
-                <option value="">--Select--</option>
-                <option value="online">Pay Online (PayFast)</option>
-                <option value="manual">Manual Payment (Bank Transfer)</option>
-            </select>
+        <h3>Choose Payment Method</h3>
 
-            <div id="manual_payment_info" style="display:none; margin-top:20px;">
-                <h3>Banking Details</h3>
-                <p><strong>Bank Name:</strong> Standard Bank</p>
+        <form action="{{ url_for('payment') }}" method="POST" enctype="multipart/form-data" class="payment-options">
+            <div class="payment-method">
+                <input type="radio" id="online" name="payment_method" value="online" required>
+                <label for="online">Pay Online (PayFast)</label>
+            </div>
+            <div class="payment-method">
+                <input type="radio" id="manual" name="payment_method" value="manual">
+                <label for="manual">Manual Payment (Bank Deposit)</label>
+            </div>
+
+            <div id="manual-payment-info" style="display:none; margin-top: 20px;">
+                <h4>Banking Details</h4>
                 <p><strong>Account Name:</strong> Amangcikwa Holdings PTY Ltd</p>
                 <p><strong>Account Number:</strong> 10233031039</p>
-                <p>Please upload Proof of Payment below:</p>
-                <input type="file" name="proof_file" accept=".jpg,.jpeg,.png,.pdf" required>
+                <p><strong>Bank:</strong> Standard Bank</p>
+
+                <label for="proof">Upload Proof of Payment:</label>
+                <input type="file" id="proof" name="proof" accept=".jpg,.jpeg,.png,.pdf">
             </div>
 
-            <div style="margin-top:20px;">
-                <button type="submit">Proceed</button>
-            </div>
+            <button type="submit" class="primary-button">Proceed</button>
         </form>
-    </div>
+    </main>
 
     <footer>
         <p>&copy; 2025 MCO Residence. All rights reserved.</p>
     </footer>
 
     <script>
-        function showPaymentOption(value) {
-            if (value === 'manual') {
-                document.getElementById('manual_payment_info').style.display = 'block';
-            } else {
-                document.getElementById('manual_payment_info').style.display = 'none';
-            }
-        }
+        // Show/hide manual payment fields
+        const onlineRadio = document.getElementById('online');
+        const manualRadio = document.getElementById('manual');
+        const manualInfo = document.getElementById('manual-payment-info');
+
+        onlineRadio.addEventListener('change', () => {
+            manualInfo.style.display = 'none';
+        });
+
+        manualRadio.addEventListener('change', () => {
+            manualInfo.style.display = 'block';
+        });
     </script>
 </body>
 </html>
