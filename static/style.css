@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header img {
+    width: 250px;
+    height: auto;
+}
+
+.about, .contact, .social, .gallery-section, .booking {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+a {
+    color: #4CAF50;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.gallery img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
