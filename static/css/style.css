@@ -82,3 +82,7 @@ footer {
     background: linear-gradient(to right, #4a00e0, #8e2de2);
     transform: scale(1.05);
 }
+.book-now-section {
+    text-align: center;
+    margin: 20px 0;
+}
