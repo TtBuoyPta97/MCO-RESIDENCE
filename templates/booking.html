@@ -2,66 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking | MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script>
-    function toggleCheckoutDate() {
-        var bookingOption = document.getElementById('booking_option').value;
-        var checkoutField = document.getElementById('checkout_date_field');
-        if (bookingOption === 'night') {
-            checkoutField.style.display = 'block';
-        } else {
-            checkoutField.style.display = 'none';
-        }
-    }
-    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleii.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Book Your Stay</h1>
-        <form action="/booking" method="post">
-            <label>Name:</label>
-            <input type="text" name="name" required>
 
-            <label>Email:</label>
-            <input type="email" name="email" required>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('booking') }}">Booking</a>
+            </div>
+        </div>
+    </nav>
 
-            <label>Phone:</label>
-            <input type="text" name="phone" required>
+    <!-- Main Content -->
+    <main class="container">
+        <h1>Make a Booking</h1>
 
-            <label>Booking Option:</label>
-            <select name="booking_option" id="booking_option" onchange="toggleCheckoutDate()" required>
-                <option value="">Select</option>
-                <option value="night">Night (R450 per night)</option>
+        <form method="POST" action="{{ url_for('booking') }}">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" required>
+
+            <label for="booking_option">Booking Option:</label>
+            <select id="booking_option" name="booking_option" required>
+                <option value="night">Per Night (R450)</option>
                 <option value="hour">1 Hour (R150)</option>
                 <option value="2hours">2 Hours (R250)</option>
             </select>
 
-            <label>Check-in Date:</label>
-            <input type="date" name="checkin_date" required>
+            <label for="checkin_date">Check-In Date:</label>
+            <input type="date" id="checkin_date" name="checkin_date" required>
 
-            <label>Check-in Time:</label>
-            <input type="time" name="checkin_time" required>
+            <label for="checkin_time">Check-In Time:</label>
+            <input type="time" id="checkin_time" name="checkin_time" required>
 
-            <div id="checkout_date_field" style="display:none;">
-                <label>Checkout Date:</label>
-                <input type="date" name="checkout_date">
-            </div>
+            <label for="checkout_date">Check-Out Date (for Night Option Only):</label>
+            <input type="date" id="checkout_date" name="checkout_date">
 
-            <label>Need Pickup?</label>
-            <select name="pickup" required>
+            <label>Do you need pickup?</label>
+            <select id="pickup" name="pickup" required>
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
-            <label>Pickup Location (if yes):</label>
-            <input type="text" name="pickup_location">
+            <label for="pickup_location">Pickup Location (if yes):</label>
+            <input type="text" id="pickup_location" name="pickup_location">
 
-            <label>Special Requests:</label>
-            <textarea name="special" rows="3"></textarea>
+            <label for="special">Special Requests:</label>
+            <textarea id="special" name="special"></textarea>
 
-            <button type="submit">Continue to Payment</button>
+            <button type="submit" class="btn">Proceed to Payment</button>
         </form>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MCO Residence. All rights reserved.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
