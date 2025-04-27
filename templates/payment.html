@@ -2,93 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Payment - MCO Residence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | MCO Residence</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styleii.css') }}">
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container">
             <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('booking') }}">Booking</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
     <main class="container">
-        <h1>Payment Summary</h1>
+        <h1>Complete Your Payment</h1>
 
-        <div class="card">
-            <p><strong>Name:</strong> {{ booking.name }}</p>
-            <p><strong>Email:</strong> {{ booking.email }}</p>
-            <p><strong>Phone:</strong> {{ booking.phone }}</p>
-            <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
-            <p><strong>Check-in:</strong> {{ booking.checkin_date }} at {{ booking.checkin_time }}</p>
+        <p><strong>Booking Option:</strong> {{ booking.booking_option_display }}</p>
+        <p><strong>Total Amount:</strong> R{{ booking.total_amount }}</p>
 
-            {% if booking.booking_option == 'night' %}
-            <p><strong>Checkout:</strong> Next Day before 11:00 AM</p>
-            {% else %}
-            <p><strong>Checkout Time:</strong> {{ booking.checkout_time }}</p>
-            {% endif %}
-
-            {% if booking.pickup == 'yes' %}
-            <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
-            {% endif %}
-
-            {% if booking.special %}
-            <p><strong>Special Request:</strong> {{ booking.special }}</p>
-            {% endif %}
-
-            <h2>Total Amount: R{{ booking.total_amount }}</h2>
-        </div>
-
-        <form action="{{ url_for('payment') }}" method="post" enctype="multipart/form-data" class="payment-form">
-
+        <form method="POST" enctype="multipart/form-data">
             <label for="payment_method">Choose Payment Method:</label>
-            <select name="payment_method" id="payment_method" required onchange="toggleManualPayment()">
-                <option value="">-- Select --</option>
-                <option value="online">Online Payment (PayFast)</option>
-                <option value="manual">Manual Payment (Bank Transfer)</option>
+            <select id="payment_method" name="payment_method" required>
+                <option value="online">Pay Online</option>
+                <option value="manual">Pay via Bank Transfer (Upload Proof)</option>
             </select>
 
-            <div id="manual_payment_details" style="display: none; margin-top: 20px;">
-                <h3>Bank Details:</h3>
-                <p><strong>Bank:</strong> Standard Bank</p>
-                <p><strong>Account Name:</strong> Amangcikwa Holdings PTY Ltd.</p>
-                <p><strong>Account Number:</strong> 10233031039</p>
-                <p><strong>Branch Code:</strong> (if needed) - 051001</p>
-
-                <label for="proof" style="margin-top: 15px;">Upload Proof of Payment:</label>
-                <input type="file" name="proof" id="proof" accept="image/*,application/pdf" required>
-
-                <div class="confirm-checkbox">
-                    <input type="checkbox" id="confirm_manual" required>
-                    <label for="confirm_manual">I confirm I have made the manual payment.</label>
-                </div>
+            <div id="proof_upload" style="display:none; margin-top: 20px;">
+                <label for="proof">Upload Payment Proof:</label>
+                <input type="file" id="proof" name="proof">
             </div>
 
-            <button type="submit" class="btn">Proceed</button>
+            <button type="submit" class="btn">Submit Payment</button>
         </form>
+
+        <script>
+            const paymentMethod = document.getElementById('payment_method');
+            const proofUpload = document.getElementById('proof_upload');
+
+            paymentMethod.addEventListener('change', function() {
+                if (this.value === 'manual') {
+                    proofUpload.style.display = 'block';
+                } else {
+                    proofUpload.style.display = 'none';
+                }
+            });
+        </script>
     </main>
 
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 MCO Residence. All Rights Reserved.</p>
+            <p>&copy; 2025 MCO Residence. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        function toggleManualPayment() {
-            var paymentMethod = document.getElementById('payment_method').value;
-            var manualSection = document.getElementById('manual_payment_details');
-            if (paymentMethod === 'manual') {
-                manualSection.style.display = 'block';
-            } else {
-                manualSection.style.display = 'none';
-            }
-        }
-    </script>
 
 </body>
 </html>
