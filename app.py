@@ -35,33 +35,41 @@ def booking():
         booking_option = request.form['booking_option']
         checkin_date = request.form['checkin_date']
         checkin_time = request.form['checkin_time']
-        checkout_date = request.form.get('checkout_date')  # Optional
         pickup = request.form['pickup']
         pickup_location = request.form.get('pickup_location')
         special = request.form.get('special')
+        checkout_date = None
+        nights = 1
 
-        # Calculate total
+        # Calculate total amount
         if booking_option == 'night':
-            total_amount = 450
-            booking_option_display = 'Night (R450)'
+            checkout_date = request.form['checkout_date']
+            checkin = datetime.strptime(checkin_date, '%Y-%m-%d')
+            checkout = datetime.strptime(checkout_date, '%Y-%m-%d')
+            nights = (checkout - checkin).days
+            if nights <= 0:
+                nights = 1  # Always minimum 1 night
+            total_amount = 450 * nights
+            booking_option_display = f'Night Stay ({nights} night{"s" if nights > 1 else ""}) - R450 per night'
+
         elif booking_option == 'hour':
             total_amount = 150
             booking_option_display = '1 Hour (R150)'
+
         elif booking_option == '2hours':
             total_amount = 250
             booking_option_display = '2 Hours (R250)'
+
         else:
             total_amount = 0
             booking_option_display = 'Unknown'
 
-        # Calculate checkout time (for hourly bookings)
+        # Calculate checkout time for hourly bookings
         checkout_time = None
-        if booking_option == 'hour':
+        if booking_option in ['hour', '2hours']:
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
-            checkout_time = (checkin_datetime + timedelta(hours=1)).strftime('%H:%M')
-        elif booking_option == '2hours':
-            checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
-            checkout_time = (checkin_datetime + timedelta(hours=2)).strftime('%H:%M')
+            hours = 1 if booking_option == 'hour' else 2
+            checkout_time = (checkin_datetime + timedelta(hours=hours)).strftime('%H:%M')
 
         # Save booking in session
         session['booking'] = {
@@ -77,6 +85,7 @@ def booking():
             'pickup_location': pickup_location,
             'special': special,
             'total_amount': total_amount,
+            'nights': nights,
             'checkout_time': checkout_time
         }
 
@@ -95,13 +104,12 @@ def payment():
         payment_method = request.form['payment_method']
 
         if payment_method == 'online':
-            # Redirect to PayFast
             return redirect(
                 'https://www.payfast.co.za/eng/process?merchant_id=14070761&merchant_key=t9gho8csdpkwd&amount='
                 + str(booking['total_amount'])
             )
+
         elif payment_method == 'manual':
-            # Handle manual payment with proof upload
             if 'proof' not in request.files:
                 return "No proof uploaded!", 400
             file = request.files['proof']
@@ -110,9 +118,7 @@ def payment():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(file_path)
 
-            # Send emails with proof
             send_emails(booking, proof_path=file_path)
-
             return redirect(url_for('success'))
 
     return render_template('payment.html', booking=booking)
@@ -126,21 +132,24 @@ def success():
 def send_emails(booking, proof_path=None):
     subject = f"Booking Confirmation - {booking['name']}"
     body = f"""
-    Booking Details:
+Booking Details:
 
-    Name: {booking['name']}
-    Email: {booking['email']}
-    Phone: {booking['phone']}
-    Booking Option: {booking['booking_option_display']}
-    Check-in: {booking['checkin_date']} at {booking['checkin_time']}
-    """
+Name: {booking['name']}
+Email: {booking['email']}
+Phone: {booking['phone']}
+Booking Option: {booking['booking_option_display']}
+Check-in Date: {booking['checkin_date']} at {booking['checkin_time']}
+"""
 
     if booking['booking_option'] == 'night':
-        body += f"\nCheckout Date: {booking['checkout_date']} (before 11:00 AM)"
+        body += f"""
+Checkout Date: {booking['checkout_date']} (before 11:00 AM)
+Number of Nights: {booking['nights']}
+"""
     else:
-        body += f"\nCheckout Time: {booking['checkout_time']}"
+        body += f"Checkout Time: {booking['checkout_time']}"
 
-    if booking['pickup'] == 'yes':
+    if booking['pickup'] == 'yes' and booking['pickup_location']:
         body += f"\nPickup Location: {booking['pickup_location']}"
 
     if booking['special']:
@@ -148,10 +157,7 @@ def send_emails(booking, proof_path=None):
 
     body += f"\n\nTotal Amount: R{booking['total_amount']}"
 
-    # Email to client
     send_email(booking['email'], subject, body)
-
-    # Email to owner
     send_email(RECEIVER_EMAIL, subject, body, attachment_path=proof_path)
 
 def send_email(to_email, subject, body, attachment_path=None):
@@ -159,7 +165,6 @@ def send_email(to_email, subject, body, attachment_path=None):
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = to_email
     msg['Subject'] = subject
-
     msg.attach(MIMEText(body, 'plain'))
 
     if attachment_path:
