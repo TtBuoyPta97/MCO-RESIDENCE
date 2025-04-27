@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCO Residence</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
@@ -38,22 +38,18 @@
         </div>
     </section>
 
-    <section class="social-section">
-        <h2>Connect with Us</h2>
+    <footer>
         <div class="social-buttons">
-            <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank">
+            <a href="https://wa.me/qr/4ZPX7LNRALZJG1" target="_blank" class="social-button">
                 <img src="{{ url_for('static', filename='images/whatsapp.png') }}" alt="WhatsApp">
             </a>
-            <a href="https://www.tiktok.com/@mco0021" target="_blank">
+            <a href="https://www.tiktok.com/@mco0021" target="_blank" class="social-button">
                 <img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="TikTok">
             </a>
-            <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank">
+            <a href="https://www.facebook.com/profile.php?id=61571083425343" target="_blank" class="social-button">
                 <img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook">
             </a>
         </div>
-    </section>
-
-    <footer>
         <p>&copy; 2025 MCO Residence. All rights reserved.</p>
     </footer>
 </body>
