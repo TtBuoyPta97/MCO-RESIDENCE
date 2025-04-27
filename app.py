@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = 'Mcoboti@002'  # Secret key for sessions
@@ -11,6 +13,10 @@ app.secret_key = 'Mcoboti@002'  # Secret key for sessions
 EMAIL_ADDRESS = 'mcoresidence@gmail.com'
 EMAIL_PASSWORD = 'lftiiuewhdhfurvs'
 RECEIVER_EMAIL = 'mcoresidence@gmail.com'
+
+# Upload settings
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Home page
 @app.route('/')
@@ -52,9 +58,9 @@ def booking():
         if booking_option == 'hour':
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
             checkout_time = (checkin_datetime + timedelta(hours=1)).strftime('%H:%M')
-        elif booking_option == '3hours':
+        elif booking_option == '2hours':
             checkin_datetime = datetime.strptime(f"{checkin_date} {checkin_time}", '%Y-%m-%d %H:%M')
-            checkout_time = (checkin_datetime + timedelta(hours=3)).strftime('%H:%M')
+            checkout_time = (checkin_datetime + timedelta(hours=2)).strftime('%H:%M')
 
         # Save booking to session
         session['booking'] = {
@@ -84,8 +90,27 @@ def payment():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        send_emails(booking)
-        return redirect(url_for('success'))
+        payment_method = request.form.get('payment_method')
+
+        if payment_method == 'online':
+            # Redirect to PayFast
+            payfast_link = "https://www.payfast.co.za/eng/process?merchant_id=14070761&merchant_key=t9gho8csdpkwd&amount={}&item_name=Booking".format(booking['total_amount'])
+            return redirect(payfast_link)
+
+        elif payment_method == 'manual':
+            # Handle manual proof upload
+            file = request.files['proof_file']
+            if file:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+
+                send_manual_payment_email(booking, filepath)
+
+                # Optional: delete after sending
+                os.remove(filepath)
+
+            return redirect(url_for('success'))
 
     return render_template('payment.html', booking=booking)
 
@@ -94,7 +119,7 @@ def payment():
 def success():
     return render_template('success.html')
 
-# Send email function
+# Send normal booking email
 def send_emails(booking):
     subject = f"Booking Confirmation - {booking['name']}"
     body = f"""
@@ -125,13 +150,47 @@ def send_emails(booking):
     # Email to owner
     send_email(RECEIVER_EMAIL, subject, body)
 
-# Actual email sending
+# Send manual payment email (with attachment)
+def send_manual_payment_email(booking, filepath):
+    subject = f"Manual Payment Proof - {booking['name']}"
+    body = f"""
+    Manual Payment Received:
+
+    Name: {booking['name']}
+    Email: {booking['email']}
+    Phone: {booking['phone']}
+    Booking Option: {booking['booking_option_display']}
+    Check-in: {booking['checkin_date']} at {booking['checkin_time']}
+    """
+
+    if booking['booking_option'] == 'night':
+        body += "\nCheckout Time: Before 11:00 AM"
+    else:
+        body += f"\nCheckout Time: {booking['checkout_time']}"
+
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = RECEIVER_EMAIL
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    with open(filepath, 'rb') as f:
+        from email.mime.application import MIMEApplication
+        part = MIMEApplication(f.read(), Name=os.path.basename(filepath))
+        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(filepath)}"'
+        msg.attach(part)
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
+
+# Actual email sender
 def send_email(to_email, subject, body):
     msg = MIMEMultipart()
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = to_email
     msg['Subject'] = subject
-
     msg.attach(MIMEText(body, 'plain'))
 
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
