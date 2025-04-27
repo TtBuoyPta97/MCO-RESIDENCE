@@ -11,7 +11,6 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
-            <img src="{{ url_for('static', filename='mco landscape.jpeg') }}" alt="MCO Residence Logo" class="logo">
             <div class="nav-links">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('booking') }}">Booking</a>
@@ -21,9 +20,11 @@
 
     <!-- Main Content -->
     <main class="container">
-        <h1>Thank You!</h1>
-        <p>Your booking has been received. We will be in touch soon to confirm your reservation.</p>
-        <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        <h1>Booking Successful!</h1>
+        <p>Thank you for your booking. We have received your information and payment proof (if applicable).</p>
+        <p>You will be contacted shortly with your confirmation details.</p>
+
+        <a href="{{ url_for('index') }}" class="btn">Return to Home</a>
     </main>
 
     <!-- Footer -->
