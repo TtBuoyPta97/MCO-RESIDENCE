@@ -1,64 +1,84 @@
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 0;
-    background-color: #f9f9f9;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.header img {
-    width: 250px;
-    height: auto;
-}
-
-.about, .contact, .social, .gallery-section, .booking {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-h1, h2 {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
     color: #333;
 }
 
-a {
-    color: #4CAF50;
-    text-decoration: none;
-    margin: 0 10px;
+/* Header */
+header {
+    text-align: center;
+    padding: 20px 0;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-a:hover {
-    text-decoration: underline;
+.logo {
+    width: 180px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px;
+}
+
+.social-links a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+/* About and Contact Sections */
+.about, .contact {
+    text-align: center;
+    padding: 40px 20px;
+    margin: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+}
+
+/* Gallery Section */
+.gallery-section {
+    padding: 40px 20px;
+    text-align: center;
 }
 
 .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
 }
 
 .gallery img {
-    width: 200px;
-    height: 150px;
+    width: 100%;
+    height: 200px;
     object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.gallery img:hover {
+    transform: scale(1.05);
 }
 
-button:hover {
-    background-color: #45a049;
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    font-size: 14px;
 }
